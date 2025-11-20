@@ -1,0 +1,13 @@
+# Quelles actions on veut lancer avant de faire un commit ? 
+# - lancer le linter 
+npm run lint --prefix api
+
+# - lancer les tests unitaires du client
+# npm run test --prefix client
+
+# - lancer les tests unitaires du backend
+# npm run test:unit --prefix api
+
+# - lancer les tests d'intégration du backend
+# npm run test:spec --prefix api
+

@@ -1,0 +1,12 @@
+# Pas besoin de versionner les node_modules => npm install
+node_modules/
+
+# Pas besoin de versionner le dist => npm run build
+dist/
+
+# On ne versionne pas pour des raisons de sécurité
+.env
+
+# On ne versionne pas le client Prisma => npx prisma generate
+prisma/generated/
+

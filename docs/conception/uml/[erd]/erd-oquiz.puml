@@ -1,0 +1,84 @@
+@startuml ERD Oquiz
+
+entity "user" as user {
+  *id : integer <<PK>>
+  --
+  firstname : varchar
+  lastname : varchar
+  email : varchar
+  password : varchar
+  role : varchar
+  created_at : datetime
+  updated_at : datetime
+}
+
+entity "quiz" as quiz {
+  *id : integer <<PK>>
+  --
+  title : varchar
+  description : text
+  published_at : datetime
+  author_id : integer <<FK>> (user.id)
+}
+
+entity "question" as question {
+  *id : integer <<PK>>
+  --
+  description : text
+  anecdote : text
+  wiki_link : varchar
+  quiz_id : integer <<FK>> (quiz.id)
+  level_id : integer <<FK>> (level.id)
+}
+
+entity "choice" as choice {
+  *id : integer <<PK>>
+  --
+  description : varchar
+  is_valid : boolean
+  question_id : integer <<FK>> (question.id)
+}
+
+entity "tag" as tag {
+  *id : integer <<PK>>
+  --
+  nom : varchar
+  parent_id : integer <<FK>> (tag.id)
+}
+
+entity "level" as level {
+  *id : integer <<PK>>
+  --
+  nom : varchar
+}
+
+entity "quiz_has_tag" as quiz_has_tag {
+  *quiz_id : integer <<PK, FK>> (quiz.id)
+  *tag_id : integer <<PK, FK>> (tag.id)
+}
+
+entity "attempt" as attempt {
+  *id : integer <<PK>>
+  --
+  user_id : integer <<FK>> (user.id)
+  quiz_id : integer <<FK>> (quiz.id)
+  score_max : integer
+  score : integer
+  date : datetime
+}
+
+' ==========================
+'       RELATIONS
+' ==========================
+
+user ||--o{ quiz : "author of"
+quiz ||--o{ question
+question ||--o{ choice
+quiz ||--o{ quiz_has_tag
+tag ||--o{ quiz_has_tag
+quiz ||--o{ attempt
+user ||--o{ attempt
+level ||--o{ question
+tag ||--o{ tag : "parent / child"
+
+@enduml

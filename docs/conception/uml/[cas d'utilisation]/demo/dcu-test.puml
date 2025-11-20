@@ -1,0 +1,14 @@
+@startuml Tentative de diagramme de cas d'utilisation
+
+actor "Bob l'éponge" as Bob 
+
+usecase "Acheter des glaces" as Ice 
+
+Bob -> Ice
+
+@enduml
+
+
+''' Pour tester le fichier : 
+''' CTRL + SHIFT + P (palette de commande) : 
+''' PlantUML Preview Current Diagram

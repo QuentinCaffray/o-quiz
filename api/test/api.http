@@ -1,0 +1,65 @@
+### Health check
+GET http://localhost:3000/api/health
+
+### Get all users
+GET http://localhost:3000/api/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJSb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjM1NTY1NTEsImV4cCI6MTc2MzU2MDE1MX0.c8jAdN15rxMW4Ap3r9_QSu-aV1KcGZwRKjVbDqjVfiU
+
+
+### Get one user
+GET http://localhost:3000/api/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJSb2xlIjoibWVtYmVyIiwiaWF0IjoxNzYzNTU2MzQ4LCJleHAiOjE3NjM1NTk5NDh9.QhepQ6izxxtOZTFpjJzBSgG6xzYk6ck7km8lvQ8-uAE
+
+### Get all levels
+GET http://localhost:3000/api/levels
+
+### Create one level
+POST http://localhost:3000/api/levels
+Content-Type: application/json
+
+{
+  "name": "Facile"
+}
+
+### Update level
+PATCH http://localhost:3000/api/levels/2
+Content-Type: application/json
+
+{
+  "name": "Bof"
+}
+
+### Register user
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "firstname": "John",
+  "lastname": "Doe",
+  "email": "john@oclock.io",
+  "password": "Toto42!!"
+}
+
+
+### Login user
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@oclock.io",
+  "password": "password"
+}
+
+
+### Get user info
+GET http://localhost:3000/api/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJSb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjM1NTYwNjYsImV4cCI6MTc2MzU1OTY2Nn0.spO_ADp6loeRhHRBDnBt5W-kk7vNQAx8OJWMuixJL5I
+
+
+### Refresh Access Token
+POST http://localhost:3000/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "taKhXtq6rAlRY9GGvaJXtVubqkB1QjwRAF7pLyQSCRxuzpbSVW1MO222+Osbt0EXQfq2TwwMA3RvsQXRdjGTmQ=="
+}
