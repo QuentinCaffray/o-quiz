@@ -3,6 +3,7 @@ import { prisma } from "../models/index.ts";
 import assert from "node:assert";
 import { adminRequester } from "../../test/index.ts";
 
+// Test GET ALL
 describe("[GET] /tags", () => {
   it("should return all tags", async () => {
     // ARRANGE
@@ -30,6 +31,7 @@ describe("[GET] /tags", () => {
   });
 });
 
+// Test GET by ID
 describe("[GET] /tags/:id", () => {
   it("should return the requested tag", async () => {
     // ARRANGE
@@ -61,6 +63,7 @@ describe("[GET] /tags/:id", () => {
   });
 });
 
+// Test POST
 describe("[POST] /tags", () => {
   it("should save a tag in database", async () => {
     // ARRANGE
@@ -99,5 +102,115 @@ describe("[POST] /tags", () => {
 
     // ASSERT
     assert.equal(status, 409);
+  });
+});
+
+// Test UPDATE
+describe("[PATCH] /tags/:id", () => {
+  it("should update an existing tag in database", async () => {
+    // ARRANGE
+    // - Il nous faut déjà un niveau dans la BDD
+    const tagToUpdate = await prisma.tag.create({
+      data: { name: "Jardiland" },
+    });
+    // - Il nous faut un body pour faire l'appel API
+    const body = { name: "Disneyland" };
+
+    // ACT
+    // - Appel API
+    await adminRequester.patch(`/tags/${tagToUpdate.id}`, body);
+
+    // ASSERT
+    // - Regarder dans la BDD si le niveau a été mis à jour
+    const updatedTag = await prisma.tag.findUniqueOrThrow({
+      where: { id: tagToUpdate.id },
+    });
+    assert.equal(updatedTag.id, tagToUpdate.id);
+    assert.equal(updatedTag.name, body.name);
+    assert.notEqual(updatedTag.updated_at, updatedTag.created_at); // La date d'update a été mise à jour également
+  });
+
+  it("should return the updated tag", async () => {
+    // ARRANGE
+    const tagToUpdate = await prisma.tag.create({
+      data: { name: "A mettre à jour" },
+    });
+    const body = { name: "Nouveau nom du tag" };
+
+    // ACT
+    const { status, data } = await adminRequester.patch(
+      `/tags/${tagToUpdate.id}`,
+      body
+    );
+
+    // ASSERT
+    assert.equal(status, 200);
+    assert.ok(data.id);
+    assert.ok(data.created_at);
+    assert.ok(data.updated_at);
+    assert.equal(data.name, body.name);
+  });
+
+  it("should return a 404 when the requested tag does not exist", async () => {
+    // ARRANGE
+    const unexistingtagId = 42;
+    const body = { name: "Nouveau nom" };
+
+    // ACT
+    const { status } = await adminRequester.patch(
+      `/tags/${unexistingtagId}`,
+      body
+    );
+
+    // ASSERT
+    assert.equal(status, 404);
+  });
+
+  it("should return a 409 if the target name is already taken", async () => {
+    // ARRANGE
+    const tagToUpdate = await prisma.tag.create({
+      data: { name: "A mettre à jour" },
+    });
+    await prisma.tag.create({ data: { name: "Déjà pris" } });
+    const body = { name: "Déjà pris" };
+
+    // ACT
+    const { status } = await adminRequester.patch(
+      `/tags/${tagToUpdate.id}`,
+      body
+    );
+
+    // ASSERT
+    assert.equal(status, 409);
+  });
+});
+
+describe("[DELETE] /tags/:id", () => {
+  it("should delete an existing tag in database", async () => {
+    // ARRANGE
+    const tagToDelete = await prisma.tag.create({
+      data: { name: "A supprimer" },
+    });
+
+    // ACT
+    const { status } = await adminRequester.delete(`/tags/${tagToDelete.id}`);
+
+    // ASSERT
+    assert.equal(status, 204);
+    const deletedTag = await prisma.tag.findUnique({
+      where: { id: tagToDelete.id },
+    });
+    assert.equal(deletedTag, null);
+  });
+
+  it("should return 404 when try to delete unexisting tag", async () => {
+    // ARRANGE
+
+    // ACT
+    const { status, data } = await adminRequester.delete(`/tags/999999`);
+
+    // ASSERT
+    assert.equal(status, 404);
+    assert.equal(data.error, "Tag not found");
   });
 });
