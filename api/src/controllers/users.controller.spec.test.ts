@@ -7,10 +7,22 @@ describe("[GET] /api/users", () => {
   it("should return the users from the database", async () => {
     // ARRANGE
     // --> rajouter des faux utilisateurs dans la BDD
-    await prisma.user.createMany({ data: [
-      { firstname: "Alice", lastname: "Oclock", email: "alice@oclock.io", password: "1234" },
-      { firstname: "Bob", lastname: "Oclock", email: "bob@oclock.io", password: "1234" },
-    ] });
+    await prisma.user.createMany({
+      data: [
+        {
+          firstname: "Alice",
+          lastname: "Oclock",
+          email: "alice@oclock.io",
+          password: "1234",
+        },
+        {
+          firstname: "Bob",
+          lastname: "Oclock",
+          email: "bob@oclock.io",
+          password: "1234",
+        },
+      ],
+    });
 
     // ACT
     // --> faire l'appel fetch pour les récupérer
@@ -33,12 +45,21 @@ describe("[GET] /api/users", () => {
 
   it("should return all properties of users", async () => {
     // ARRANGE
-    await prisma.user.createMany({ data: [
-      { firstname: "Alice", lastname: "Oclock", email: "alice@oclock.io", password: "1234" },
-    ] });
+    await prisma.user.createMany({
+      data: [
+        {
+          firstname: "Alice",
+          lastname: "Oclock",
+          email: "alice@oclock.io",
+          password: "1234",
+        },
+      ],
+    });
 
     // ACT
-    const { data: [alice] } = await adminRequester.get("/users");
+    const {
+      data: [alice],
+    } = await adminRequester.get("/users");
 
     // ASSERT
     assert.equal(alice.firstname, "Alice");
@@ -51,12 +72,21 @@ describe("[GET] /api/users", () => {
 
   it("should not return the users' password", async () => {
     // ARRANGE
-    await prisma.user.createMany({ data: [
-      { firstname: "Alice", lastname: "Oclock", email: "alice@oclock.io", password: "1234" },
-    ] });
+    await prisma.user.createMany({
+      data: [
+        {
+          firstname: "Alice",
+          lastname: "Oclock",
+          email: "alice@oclock.io",
+          password: "1234",
+        },
+      ],
+    });
 
     // ACT
-    const { data: [alice] } = await adminRequester.get("/users");
+    const {
+      data: [alice],
+    } = await adminRequester.get("/users");
 
     // ASSERT
     assert.equal(alice.password, undefined); // On s'assure, advitam eternam, que l'API ne renverra plus les mdp des utilisateurs
@@ -67,14 +97,20 @@ describe("[GET] /api/users/:id", () => {
   it("should return the requested user", async () => {
     // ARRANGE
     // -> créer un utilisateur en BDD
-    const databaseUser = await prisma.user.create({ data: {
-      firstname: "John", lastname: "Doe", email: "john@oclock.io", password: "1234"
-    } });
-
+    const databaseUser = await prisma.user.create({
+      data: {
+        firstname: "John",
+        lastname: "Doe",
+        email: "john@oclock.io",
+        password: "1234",
+      },
+    });
 
     // ACT
     // -> appeler l'utilisateur
-    const { data: apiUser } = await adminRequester.get(`/users/${databaseUser.id}`);
+    const { data: apiUser } = await adminRequester.get(
+      `/users/${databaseUser.id}`
+    );
 
     // ASSERT
     // -> vérifier les champs, notamment que l'ID correspond bien
@@ -97,6 +133,5 @@ describe("[GET] /api/users/:id", () => {
     // ASSERT
     assert.equal(status, 404);
     assert.equal(body.error, "User not found");
-    
   });
 });

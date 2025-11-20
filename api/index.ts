@@ -1,5 +1,5 @@
-// Lancer un serveur de dev 
-// Lancer un serveur de prod 
+// Lancer un serveur de dev
+// Lancer un serveur de prod
 
 import { config } from "./config.ts";
 import { app } from "./src/app.ts";

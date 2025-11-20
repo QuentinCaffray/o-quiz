@@ -24,7 +24,7 @@ before(() => {
   `);
 
   // (Hack) Attendre une petite seconde pour s'assurer qu'elle tourne bien
-  execSync(`sleep 1`); // 1 seconde
+  execSync(`sleep 2`); // 2 seconde
 
   // Créer les tables dans la BDD
   // Comment prisma sait qu'il faut appeller la BDD DE TEST (oquiztest)

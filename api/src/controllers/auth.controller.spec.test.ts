@@ -1,5 +1,9 @@
 import { describe, it } from "node:test";
-import { adminRequester, generateFakeUser, httpRequester } from "../../test/index.ts";
+import {
+  adminRequester,
+  generateFakeUser,
+  httpRequester,
+} from "../../test/index.ts";
 import { prisma } from "../models/index.ts";
 import assert from "node:assert";
 import argon2 from "argon2";
@@ -15,7 +19,7 @@ describe("[POST] /auth/register", () => {
       firstname: "Johnny",
       lastname: "Oclock",
       email: "johnny@oclock.io",
-      password: "P4$$Word!"
+      password: "P4$$Word!",
     };
 
     // ACT
@@ -38,7 +42,7 @@ describe("[POST] /auth/register", () => {
       firstname: "Johnny",
       lastname: "Oclock",
       email: "johnny@oclock.io",
-      password: "P4$$Word!"
+      password: "P4$$Word!",
     };
 
     // ACT
@@ -53,14 +57,14 @@ describe("[POST] /auth/register", () => {
     assert.equal(data.lastname, body.lastname);
     assert.equal(data.password, undefined);
   });
-  
+
   it("should return a 409 if the email is already taken", async () => {
     // ARRANGE
     const body = {
       firstname: "Johnny",
       lastname: "Oclock",
       email: "johnny@oclock.io",
-      password: "P4$$Word!"
+      password: "P4$$Word!",
     };
     await prisma.user.create({ data: body }); // On pré-inscrit l'utilisateur pour l'empêcher de se ré-inscrire
 
@@ -77,7 +81,7 @@ describe("[POST] /auth/register", () => {
       firstname: "Johnny",
       lastname: "Oclock",
       email: "johnny@oclock.io",
-      password: "T0to!" // 5 caractères
+      password: "T0to!", // 5 caractères
     };
 
     // ACT
@@ -92,12 +96,14 @@ describe("[POST] /auth/login", () => {
   it("should return a JWT containing the userId", async () => {
     // ARRANGE
     // - 1 utilisateur avec un mdp haché en BDD
-    const user = await prisma.user.create({ data: {
-      firstname: "John",
-      lastname: "Doe",
-      email: "john@doe.io",
-      password: await argon2.hash("Helloworld")
-    } });
+    const user = await prisma.user.create({
+      data: {
+        firstname: "John",
+        lastname: "Doe",
+        email: "john@doe.io",
+        password: await argon2.hash("Helloworld"),
+      },
+    });
     // - 1 body pour faire l'appel
     const body = { email: "john@doe.io", password: "Helloworld" };
 
@@ -117,12 +123,14 @@ describe("[POST] /auth/login", () => {
 
   it("should return a refresh token", async () => {
     // ARRANGE
-    const user = await prisma.user.create({ data: {
-      firstname: "John",
-      lastname: "Doe",
-      email: "john@doe.io",
-      password: await argon2.hash("Helloworld")
-    } });
+    const user = await prisma.user.create({
+      data: {
+        firstname: "John",
+        lastname: "Doe",
+        email: "john@doe.io",
+        password: await argon2.hash("Helloworld"),
+      },
+    });
     const body = { email: "john@doe.io", password: "Helloworld" };
 
     // ACT
@@ -150,12 +158,14 @@ describe("[POST] /auth/login", () => {
 
   it("should return 401 when the password does not match", async () => {
     // ARRANGE
-    await prisma.user.create({ data: {
-      firstname: "John",
-      lastname: "Doe",
-      email: "john@doe.io",
-      password: await argon2.hash("Helloworld")
-    } });
+    await prisma.user.create({
+      data: {
+        firstname: "John",
+        lastname: "Doe",
+        email: "john@doe.io",
+        password: await argon2.hash("Helloworld"),
+      },
+    });
     const body = { email: "john@doe.io", password: "Mauvais mot de passe" };
 
     // ACT
@@ -178,7 +188,7 @@ describe("[GET] /auth/me", () => {
     // ACT
     // - On oublie pas le header d'authorization
     const { data, status } = await httpRequester.get("/auth/me", {
-      headers: { Authorization: `Bearer ${accessToken}` }
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     // ASSERT
@@ -200,7 +210,7 @@ describe("[GET] /auth/me", () => {
 
     // ACT
     const { status } = await httpRequester.get("/auth/me", {
-      headers: { Cookie: `accessToken=${accessToken}` }
+      headers: { Cookie: `accessToken=${accessToken}` },
     });
 
     // ASSERT
@@ -218,12 +228,14 @@ describe("[GET] /auth/me", () => {
   it("should return a 401 when the accessToken is expired", async () => {
     // ARRANGE
     const user = await prisma.user.create({ data: generateFakeUser() });
-    const accessToken = jwt.sign({ userId: user.id }, config.jwtSecret, { expiresIn: "1ms" });
-    await new Promise(resolve => setTimeout(resolve, 10)); // Attend 10ms ==> notre JWT est expiré
+    const accessToken = jwt.sign({ userId: user.id }, config.jwtSecret, {
+      expiresIn: "1ms",
+    });
+    await new Promise((resolve) => setTimeout(resolve, 10)); // Attend 10ms ==> notre JWT est expiré
 
     // ACT
     const { status } = await httpRequester.get("/auth/me", {
-      headers: { Authorization: `Bearer ${accessToken}` }
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     // ASSERT
@@ -238,7 +250,7 @@ describe("[GET] /auth/me", () => {
 
     // ACT
     const { status } = await httpRequester.get("/auth/me", {
-      headers: { Authorization: `Bearer ${fakeAccessToken}` }
+      headers: { Authorization: `Bearer ${fakeAccessToken}` },
     });
 
     // ASSERT
@@ -256,8 +268,10 @@ describe("[POST] /auth/refresh", () => {
 
     // ACT
     // - Faire l'appel avec le token dans le body
-    const { data } = await httpRequester.post("/auth/refresh", { refreshToken });
-    
+    const { data } = await httpRequester.post("/auth/refresh", {
+      refreshToken,
+    });
+
     // ASSERT
     // - regarder la réponse : accessToken + refreshToken
     assert.ok(data.accessToken);
@@ -274,7 +288,13 @@ describe("[POST] /auth/logout", () => {
 
     // ASSERT
     assert.equal(status, 204);
-    assert.equal(headers["set-cookie"]![0], 'accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
-    assert.equal(headers["set-cookie"]![1], 'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
+    assert.equal(
+      headers["set-cookie"]![0],
+      "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+    );
+    assert.equal(
+      headers["set-cookie"]![1],
+      "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+    );
   });
 });
