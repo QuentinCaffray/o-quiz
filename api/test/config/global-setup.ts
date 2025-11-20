@@ -9,7 +9,7 @@ let server: Server;
 // S'exécute 1 fois AVANT TOUS les tests
 before(() => {
   // (Hack) S'assurer qu'aucune BDD de test n'est préalablement lancée
-  execSync(`docker rm -f oquiztest 2>/dev/null || true`);  // Note : '2>/dev/null' permet de ne rien écrire en console. Note : "|| true" nous assure que si la BDD était déjà supprimé, alors ça ne plante pas
+  execSync(`docker rm -f oquiztest 2>/dev/null || true`); // Note : '2>/dev/null' permet de ne rien écrire en console. Note : "|| true" nous assure que si la BDD était déjà supprimé, alors ça ne plante pas
 
   // Créer un conteneur Postgres (notre BDD de test)
   execSync(`
@@ -69,4 +69,4 @@ async function truncateTables() {
       END LOOP;
     END $$;
   `);
-};
+}

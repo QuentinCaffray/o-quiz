@@ -7,15 +7,14 @@ describe("[GET] /levels", () => {
   it("should return all levels", async () => {
     // ARRANGE
     // --> créer 2 niveaux
-    const levels = await prisma.level.createManyAndReturn({ data: [
-      { name: "Niveau 1"},
-      { name: "Niveau 2"}
-    ] });
-      
+    const levels = await prisma.level.createManyAndReturn({
+      data: [{ name: "Niveau 1" }, { name: "Niveau 2" }],
+    });
+
     // ACT
     // --> faire l'appel de la route
     const { data: body } = await adminRequester.get("/levels"); // CALL HTTP
-      
+
     // ASSERT
     // --> Vérifier que la réponse contient 2 niveaux
     assert.deepStrictEqual(body, [
@@ -30,8 +29,38 @@ describe("[GET] /levels", () => {
         name: levels[1].name,
         created_at: levels[1].created_at.toISOString(),
         updated_at: levels[1].updated_at.toISOString(),
-      }
+      },
     ]);
+  });
+});
+
+describe("[GET] /levels/:id", () => {
+  it("should return the requested level", async () => {
+    // ARRANGE
+    const createdLevel = await prisma.level.create({
+      data: { name: "Niveau 3" },
+    });
+
+    // ACT
+    const { status, data } = await adminRequester.get(
+      `/levels/${createdLevel.id}`
+    );
+
+    // ASSERT
+    assert.equal(status, 200);
+    assert.equal(data.id, createdLevel.id);
+    assert.equal(data.name, createdLevel.name);
+  });
+
+  it("should return a 404 status when the requested level does not exist", async () => {
+    // ARRANGE
+
+    // ACT
+    const { status, data } = await adminRequester.get(`/levels/9999999`);
+
+    // ASSERT
+    assert.equal(status, 404);
+    assert.equal(data.error, "Level not found");
   });
 });
 
@@ -81,7 +110,7 @@ describe("[POST] /levels", () => {
 
     // ACT
     const { status } = await adminRequester.post("/levels", body);
-    
+
     // ASSERT
     assert.equal(status, 409);
   });
@@ -102,7 +131,9 @@ describe("[PATCH] /levels/:id", () => {
   it("should update an existing level in database", async () => {
     // ARRANGE
     // - Il nous faut déjà un niveau dans la BDD
-    const levelToUpdate = await prisma.level.create({ data: { name: "A mettre à jour" } });
+    const levelToUpdate = await prisma.level.create({
+      data: { name: "A mettre à jour" },
+    });
     // - Il nous faut un body pour faire l'appel API
     const body = { name: "Nouveau nom du level" };
 
@@ -112,7 +143,9 @@ describe("[PATCH] /levels/:id", () => {
 
     // ASSERT
     // - Regarder dans la BDD si le niveau a été mis à jour
-    const updatedLevel = await prisma.level.findUniqueOrThrow({ where: { id: levelToUpdate.id } });
+    const updatedLevel = await prisma.level.findUniqueOrThrow({
+      where: { id: levelToUpdate.id },
+    });
     assert.equal(updatedLevel.id, levelToUpdate.id);
     assert.equal(updatedLevel.name, body.name);
     assert.notEqual(updatedLevel.updated_at, updatedLevel.created_at); // La date d'update a été mise à jour également
@@ -120,11 +153,16 @@ describe("[PATCH] /levels/:id", () => {
 
   it("should return the updated level", async () => {
     // ARRANGE
-    const levelToUpdate = await prisma.level.create({ data: { name: "A mettre à jour" } });
+    const levelToUpdate = await prisma.level.create({
+      data: { name: "A mettre à jour" },
+    });
     const body = { name: "Nouveau nom du level" };
 
     // ACT
-    const { status, data } = await adminRequester.patch(`/levels/${levelToUpdate.id}`, body);
+    const { status, data } = await adminRequester.patch(
+      `/levels/${levelToUpdate.id}`,
+      body
+    );
 
     // ASSERT
     assert.equal(status, 200);
@@ -140,7 +178,10 @@ describe("[PATCH] /levels/:id", () => {
     const body = { name: "Nouveau nom" };
 
     // ACT
-    const { status } = await adminRequester.patch(`/levels/${unexistingLevelId}`, body);
+    const { status } = await adminRequester.patch(
+      `/levels/${unexistingLevelId}`,
+      body
+    );
 
     // ASSERT
     assert.equal(status, 404);
@@ -148,13 +189,18 @@ describe("[PATCH] /levels/:id", () => {
 
   it("should return a 409 if the target name is already taken", async () => {
     // ARRANGE
-    const levelToUpdate = await prisma.level.create({ data: { name: "A mettre à jour" } });
+    const levelToUpdate = await prisma.level.create({
+      data: { name: "A mettre à jour" },
+    });
     await prisma.level.create({ data: { name: "Déjà pris" } });
     const body = { name: "Déjà pris" };
 
     // ACT
-    const { status } = await adminRequester.patch(`/levels/${levelToUpdate.id}`, body);
-    
+    const { status } = await adminRequester.patch(
+      `/levels/${levelToUpdate.id}`,
+      body
+    );
+
     // ASSERT
     assert.equal(status, 409);
   });
@@ -165,13 +211,20 @@ describe("[PATCH] /levels/:id", () => {
   it("should return a 500 status if an database error occures", async () => {
     // ARRANGE
     // - modifier le comportement de la fonction prisma.level.update() pour qu'elle lève une erreur
-    prisma.level.update = () => { throw new Error("Une erreur sauvage de base de données est apparue !"); };
+    prisma.level.update = () => {
+      throw new Error("Une erreur sauvage de base de données est apparue !");
+    };
 
-    const levelToUpdate = await prisma.level.create({ data: { name: "A mettre à jour" } });
+    const levelToUpdate = await prisma.level.create({
+      data: { name: "A mettre à jour" },
+    });
     const body = { name: "Nouveau nom du level" };
 
     // ACT
-    const { status, data } = await adminRequester.patch(`/levels/${levelToUpdate.id}`, body);
+    const { status, data } = await adminRequester.patch(
+      `/levels/${levelToUpdate.id}`,
+      body
+    );
 
     // ASSERT
     // - cette erreur renvoie bien une 500
@@ -181,5 +234,37 @@ describe("[PATCH] /levels/:id", () => {
     // CLEAN UP
     // - remettre le comportement initial de la fonction
     prisma.level.update = prismaLevelUpdate;
+  });
+});
+
+describe("[DELETE] /levels/:id", () => {
+  it("should delete an existing level in database", async () => {
+    // ARRANGE
+    const levelToDelete = await prisma.level.create({
+      data: { name: "A supprimer" },
+    });
+
+    // ACT
+    const { status } = await adminRequester.delete(
+      `/levels/${levelToDelete.id}`
+    );
+
+    // ASSERT
+    assert.equal(status, 204);
+    const deletedLevel = await prisma.level.findUnique({
+      where: { id: levelToDelete.id },
+    });
+    assert.equal(deletedLevel, null);
+  });
+
+  it("should return 404 when try to delete unexisting level", async () => {
+    // ARRANGE
+
+    // ACT
+    const { status, data } = await adminRequester.delete(`/levels/9999999`);
+
+    // ASSERT
+    assert.equal(status, 404);
+    assert.equal(data.error, "Level not found");
   });
 });

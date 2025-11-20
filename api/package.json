@@ -27,7 +27,7 @@
     "======= Pour les tests ========": "========================",
     "test:unit": "node --test ./src/**/*.unit.test.ts",
     "test:unit:watch": "node --test --watch ./src/**/*.unit.test.ts",
-    "test:spec": "node --test --env-file=./test/config/.env.test --import ./test/config/global-setup.ts --experimental-test-isolation=none ./src/**/*.spec.test.ts"
+    "test:spec": "node --test --env-file=./test/config/.env.test --import ./test/config/global-setup.ts --experimental-test-isolation=none \"./src/**/*.spec.test.ts\""
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
