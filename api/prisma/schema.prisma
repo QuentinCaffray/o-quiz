@@ -74,3 +74,51 @@ model Tag {
 
   @@map("tag")
 }
+
+model Quiz {
+  id Int @id @default(autoincrement())
+
+  name        String
+  description String?
+
+  questions Question[] // Relation 1-N : un quiz a plusieurs questions
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@map("quiz")
+}
+
+model Question {
+  id Int @id @default(autoincrement())
+
+  description String
+  anecdote    String?
+  wiki_link   String?
+
+  quiz    Quiz @relation(fields: [quiz_id], references: [id])
+  quiz_id Int
+
+  choices Choice[] // Relation 1-N : une question a plusieurs choix
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@map("question")
+}
+
+model Choice {
+  id Int @id @default(autoincrement())
+
+  description String
+  is_valid  Boolean @default(false)
+
+  question    Question @relation(fields: [question_id], references: [id])
+  question_id Int
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@map("choice")
+}
+
