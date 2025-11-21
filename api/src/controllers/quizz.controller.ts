@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import z from "zod";
 import { prisma } from "../models/index.ts";
-import { ConflictError, NotFoundError } from "../lib/errors.ts";
+import { NotFoundError } from "../lib/errors.ts";
 
 // Recupère tout les Quizzes
 export async function getAllQuizzes(req: Request, res: Response) {
