@@ -434,7 +434,7 @@ Projet pédagogique réalisé dans le cadre de la formation **Développeur Web F
 
 **Quentin Caffray**
 
-- 💼 [LinkedIn](www.linkedin.com/in/quentin-caffray-dev)
+- 💼 [LinkedIn](https://www.linkedin.com/in/quentin-caffray-dev)
 - 🐙 [GitHub](https://github.com/QuentinCaffray)
 
 ---
