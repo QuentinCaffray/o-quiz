@@ -438,7 +438,3 @@ Projet pédagogique réalisé dans le cadre de la formation **Développeur Web F
 - 🐙 [GitHub](https://github.com/QuentinCaffray)
 
 ---
-
-## 🙏 Remerciements
-
-Merci à l'équipe pédagogique d'O'clock pour leur accompagnement tout au long de ce projet.
