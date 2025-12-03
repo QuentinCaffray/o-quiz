@@ -426,15 +426,8 @@ Ce projet m'a permis de développer mes compétences sur :
 
 ## 📄 Licence
 
-Projet pédagogique réalisé dans le cadre de la formation **Développeur Web Full-Stack** chez [O'clock](https://oclock.io).
+Projet pédagogique réalisé dans le cadre de la formation O'clock.
 
 ---
 
-## 👨‍💻 Auteur
-
-**Quentin Caffray**
-
-- 💼 [LinkedIn](https://www.linkedin.com/in/quentin-caffray-dev)
-- 🐙 [GitHub](https://github.com/QuentinCaffray)
-
----
+**Réalisé par Quentin Caffray** - [LinkedIn](https://www.linkedin.com/in/quentin-caffray-dev) - [GitHub](https://github.com/QuentinCaffray)
